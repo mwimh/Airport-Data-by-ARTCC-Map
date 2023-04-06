@@ -1,7 +1,7 @@
 .centers {
-    fill-opacity: 0.35;
     stroke:rgb(255, 255, 255);
-    stroke-width: 1px;
+    stroke-width: 1.5px;
+    stroke-linecap: round;
 }
 
 .states {
@@ -11,7 +11,7 @@
 }
 
 .backgnd {
-    fill:rgb(228, 202, 167);;
+    fill:rgb(241, 225, 203);;
     stroke: black;
     stroke-width: 0.5px;
 }
@@ -28,7 +28,7 @@
 }
 
 .gratBackground {
-    fill:rgb(80, 137, 241);
+    fill:rgb(177, 193, 223);
     fill-opacity: 0.8;
 }
 
@@ -37,7 +37,7 @@
 }
 
 .points {
-    fill-opacity: 0.75;
-    fill:rgb(67, 252, 150);
+    fill:rgb(255, 255, 255);
     stroke: black;
+    stroke-width: 2px;
 }
