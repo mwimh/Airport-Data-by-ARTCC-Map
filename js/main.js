@@ -9,7 +9,7 @@
     function setMap() {
         //map frame dimensions
         var width = window.innerWidth * 0.5,
-            height = width*0.6;
+            height = width * 0.6;
         //create new svg container for the map
         var map = d3.select("body")
             .append("svg")
@@ -21,7 +21,7 @@
             .center([0, 38.5])
             .rotate([98.5, 0, 0])
             .parallels([20, 45])
-            .scale(height*1.9)
+            .scale(height * 1.9)
             .translate([width / 2, height / 2]);
         var path = d3.geoPath()
             .projection(projection);
@@ -115,7 +115,7 @@
     function setChart(csvData, colorScale) {
         //chart frame dimensions
         var chartWidth = window.innerWidth * 0.45,
-            chartHeight = chartWidth*0.6*(1+1/9);
+            chartHeight = chartWidth * 0.6 * (1 + 1 / 9);
 
         //create a second svg element to hold the bar chart
         var chart = d3.select("body")
@@ -174,10 +174,10 @@
                 return chartHeight - yScale(parseFloat(d[expressed])) - 5;
             })
             .text(function (d) {
-                return Math.round((d[expressed]*100)*100)/100+'%';
+                return Math.round((d[expressed] * 100) * 100) / 100 + '%';
             });
-        
-            //create a text element for the chart title
+
+        //create a text element for the chart title
         var chartTitle = chart.append("text")
             .attr("x", 20)
             .attr("y", 40)
