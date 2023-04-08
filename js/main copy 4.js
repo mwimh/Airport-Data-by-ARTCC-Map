@@ -1,15 +1,15 @@
 //First line of main.js...wrap everything in a self-executing anonymous function to move to local scope
 (function () {
     //pseudo-global variables
-    var attrArray = ["Total Passengers", "Total Cargo Weight", "Average Distance Flown per Passenger", "% of Flights Delayed", "% of Flights Cancelled"]; //list of attributes
-    var expressed = attrArray[4]; //initial attribute
+    var attrArray = ["paxTotal", "cargoWt", "paxMiles", "delay", "canx"]; //list of attributes
+    var expressed = attrArray[2]; //initial attribute
 
     //begin script when window loads
     window.onload = setMap();
     function setMap() {
         //map frame dimensions
-        var width = window.innerWidth * 0.5,
-            height = width*0.6;
+        var width = 960,
+            height = 550;
         //create new svg container for the map
         var map = d3.select("body")
             .append("svg")
@@ -21,7 +21,7 @@
             .center([0, 38.5])
             .rotate([98.5, 0, 0])
             .parallels([20, 45])
-            .scale(height*1.9)
+            .scale(1050)
             .translate([width / 2, height / 2]);
         var path = d3.geoPath()
             .projection(projection);
@@ -83,7 +83,24 @@
                 .attr("class", "points")
                 .attr("d", path);
 
-            setChart(csvData, colorScale);
+
+            /*
+        var labels = map.selectAll(".labels")
+            .data(pointsTopo)
+            .enter()
+            .append("text")
+            .attr("class", "labels")
+            .attr("text-anchor", "left")
+            .attr("x", '5')
+            .attr("y", '5')
+
+        var nameLine = labels.append("tspan")
+            .attr("class", "nameLine")
+            .text(function (d) {
+                return d.cityName;
+            });
+*/
+
         };
     };
 
@@ -109,80 +126,6 @@
             };
         };
         return centersTopo;
-    };
-
-    //function to create coordinated bar chart
-    function setChart(csvData, colorScale) {
-        //chart frame dimensions
-        var chartWidth = window.innerWidth * 0.45,
-            chartHeight = chartWidth*0.6*(1+1/9);
-
-        //create a second svg element to hold the bar chart
-        var chart = d3.select("body")
-            .append("svg")
-            .attr("width", chartWidth)
-            .attr("height", chartHeight)
-            .attr("class", "chart");
-
-        //create a scale to size bars proportionally to frame
-        var yScale = d3.scaleLinear()
-            .range([0, chartHeight])
-            .domain([0, .16]);
-
-        //set bars for each province
-        var bars = chart.selectAll(".bars")
-            .data(csvData)
-            .enter()
-            .append("rect")
-            .sort(function (a, b) {
-                return a[expressed] - b[expressed]
-            })
-            .attr("class", function (d) {
-                return "bars " + d.IDENT;
-            })
-            .attr("width", chartWidth / csvData.length - 1)
-            .attr("x", function (d, i) {
-                return i * (chartWidth / csvData.length);
-            })
-            .attr("height", function (d) {
-                return yScale(parseFloat(d[expressed]));
-            })
-            .attr("y", function (d) {
-                return chartHeight - yScale(parseFloat(d[expressed]));
-            })
-            .style("fill", function (d) {
-                return colorScale(d[expressed]);
-            });
-
-        //annotate bars with attribute value text
-        var numbers = chart.selectAll(".numbers")
-            .data(csvData)
-            .enter()
-            .append("text")
-            .sort(function (a, b) {
-                return a[expressed] - b[expressed]
-            })
-            .attr("class", function (d) {
-                return "numbers " + d.IDENT;
-            })
-            .attr("text-anchor", "middle")
-            .attr("x", function (d, i) {
-                var fraction = chartWidth / csvData.length;
-                return i * fraction + (fraction - 1) / 2;
-            })
-            .attr("y", function (d) {
-                return chartHeight - yScale(parseFloat(d[expressed])) - 5;
-            })
-            .text(function (d) {
-                return Math.round((d[expressed]*100)*100)/100+'%';
-            });
-        
-            //create a text element for the chart title
-        var chartTitle = chart.append("text")
-            .attr("x", 20)
-            .attr("y", 40)
-            .attr("class", "chartTitle")
-            .text(expressed + " in Each ARTCC");
     };
 
     function setGraticule(map, path) {
@@ -228,13 +171,12 @@
 
     function makeColorScale(data) {
         var colorClasses = [
-            '#ffffb2',
-            '#fed976',
-            '#feb24c',
-            '#fd8d3c',
-            '#fc4e2a',
-            '#e31a1c',
-            '#b10026'
+            '#ffffd4',
+            '#fee391',
+            '#fec44f',
+            '#fe9929',
+            '#d95f0e',
+            '#993404'
         ];
         //create color scale generator
         var colorScale = d3.scaleQuantile()

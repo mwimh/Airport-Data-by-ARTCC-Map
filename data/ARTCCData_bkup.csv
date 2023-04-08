@@ -1,4 +1,4 @@
-﻿id,name,IDENT,Total Passengers,Total Cargo Weight,Average Distance Flown per Passenger,% of Flights Delayed,% of Flights Cancelled
+﻿id,name,IDENT,paxTotal,cargoWt,paxMiles,delay,canx
 15,Salt Lake City,ZLC,10.63,30.99,908,0.1385,0.0068
 12,Seattle,ZSE,20.19,146.13,1495,0.1708,0.0069
 9,Phoenix,ZAB,22.02,67.01,1068,0.1845,0.0069
