@@ -139,15 +139,15 @@
             .attr("class", function (d) {
                 return "centers " + d.properties.artcc;
             })
-            .attr("d", path)
-            .style("fill", function (d) {
-                var value = d.properties[expressed];
-                if (value) {
-                    return colorScale(d.properties[expressed]);
-                } else {
-                    return "#ccc";
-                }
-            });
+            .attr("d", path)        
+            .style("fill", function(d){            
+                var value = d.properties[expressed];            
+                if(value) {                
+                    return colorScale(d.properties[expressed]);            
+                } else {                
+                    return "#ccc";            
+                }    
+        });
     };
 
     function makeColorScale(data) {
@@ -170,6 +170,7 @@
         };
         //assign array of expressed values as scale domain
         colorScale.domain(domainArray);
+        console.log(colorScale);
         return colorScale;
     };
 

@@ -1,14 +1,13 @@
 .centers {
-    stroke:rgb(0, 0, 0);
+    stroke:rgb(255, 255, 255);
     stroke-width: 1.5px;
     stroke-linecap: round;
 }
 
 .states {
     fill-opacity: 0.0;
-    stroke:rgb(0, 0, 0);
-    stroke-width: 1.5px;
-    stroke-opacity: 0.2;
+    stroke:black;
+    stroke-width: 1px;
 }
 
 .backgnd {
