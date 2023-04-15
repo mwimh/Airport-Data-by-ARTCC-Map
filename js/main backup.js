@@ -3,25 +3,29 @@
     //pseudo-global variables
     var attrArray = ["Total Passengers (Millions)", "Total Cargo Weight (Millions of lbs)", "Average # Miles Flown per Passenger", "% of Flights Delayed", "% of Flights Cancelled"]; //list of attributes
     var expressed = attrArray[0]; //initial attribute
+    var domainArray = [49.35, 2.72]
 
     //chart frame dimensions
     var chartWidth = window.innerWidth * 0.45,
         chartHeight = chartWidth * 0.6 * (1 + 1 / 9),
-        chartHeightLess = chartHeight - 10,
-        leftPadding = 10,
+        leftPadding = 45,
         rightPadding = 10,
         topBottomPadding = 10,
+        chartHeightLess = chartHeight - topBottomPadding,
         chartInnerWidth = chartWidth - leftPadding - rightPadding,
         chartInnerHeight = chartHeight - topBottomPadding * 2,
         translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
 
     //create a scale to size bars proportionally to frame and for axis
-    var yScale = d3.scaleLinear()
-        .range([0, chartHeight])
-        .domain([0, 60]);
+    //var yScale = d3.scaleLinear()
+    //    .range([0, chartHeightLess - topBottomPadding])
+    //    .domain([50, 0]);
 
     //begin script when window loads
     window.onload = setMap();
+
+    //=====================================================================
+
     function setMap() {
         //map frame dimensions
         var width = window.innerWidth * 0.5,
@@ -103,9 +107,29 @@
 
             createDropdown(csvData);
 
-            updateChart(bars, csvData.length, colorScale);
-
         };
+    };
+
+    //=====================================================================
+
+    function setGraticule(map, path) {
+        //create graticule generator
+        var graticule = d3.geoGraticule()
+            .step([5, 5]); //place graticule lines every 5 degrees of longitude and latitude
+
+        //create graticule background
+        var gratBackground = map.append("path")
+            .datum(graticule.outline()) //bind graticule background
+            .attr("class", "gratBackground") //assign class for styling
+            .attr("d", path) //project graticule
+
+        //create graticule lines
+        var gratLines = map.selectAll(".gratLines") //select graticule elements that will be created
+            .data(graticule.lines()) //bind graticule lines to each element to be created
+            .enter() //create an element for each datum
+            .append("path") //append each element to the svg as a path element
+            .attr("class", "gratLines") //assign class for styling
+            .attr("d", path); //project graticule lines
     };
 
     //=====================================================================
@@ -136,157 +160,6 @@
 
     //=====================================================================
 
-    //function to create coordinated bar chart
-    function setChart(csvData, colorScale) {
-        //chart frame dimensions
-        var chartWidth = window.innerWidth * 0.45,
-            chartHeight = chartWidth * 0.6 * (1 + 1 / 9),
-            chartHeightLess = chartHeight - 10,
-            leftPadding = 10,
-            rightPadding = 10,
-            topBottomPadding = 10,
-            chartInnerWidth = chartWidth - leftPadding - rightPadding,
-            chartInnerHeight = chartHeight - topBottomPadding * 2,
-            translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
-
-        //create a second svg element to hold the bar chart
-        var chart = d3.select("body")
-            .append("svg")
-            .attr("width", chartWidth)
-            .attr("height", chartHeight)
-            .attr("class", "chart");
-
-        //create a rectangle for chart background fill
-        var chartBackground = chart.append("rect")
-            .attr("class", "chartBackground")
-            .attr("width", chartInnerWidth)
-            .attr("height", chartInnerHeight)
-            .attr("transform", translate);
-
-        //create a scale to size bars proportionally to frame
-        var yScale = d3.scaleLinear()
-            .range([0, chartHeightLess])
-            .domain([0, 60]);
-
-        var bars = chart.selectAll(".bar")
-            .data(csvData)
-            .enter()
-            .append("rect")
-            .sort(function (a, b) {
-                return b[expressed] - a[expressed]
-            })
-            .attr("class", function (d) {
-                return "bar " + d.IDENT;
-            })
-            .attr("width", chartInnerWidth / csvData.length - 1);
-
-
-        /*
-            //set bars for each province
-        var bars = chart.selectAll(".bars")
-            .data(csvData)
-            .enter()
-            .append("rect")
-            .sort(function (a, b) {
-                return b[expressed] - a[expressed]
-            })
-            .attr("class", function (d) {
-                return "bars " + d.IDENT;
-            })
-            .attr("width", chartInnerWidth / csvData.length - 1)
-            .attr("x", function (d, i) {
-                return i * (chartInnerWidth / csvData.length) + leftPadding;
-            })
-            .attr("height", function (d) {
-                return yScale(parseFloat(d[expressed]));
-            })
-            .attr("y", function (d) {
-                return chartHeightLess - yScale(parseFloat(d[expressed]));
-            })
-            .style("fill", function (d) {
-                return colorScale(d[expressed]);
-            });
-*/
-
-
-        //annotate bars with attribute value text
-        var numbers = chart.selectAll(".numbers")
-            .data(csvData)
-            .enter()
-            .append("text")
-            .sort(function (a, b) {
-                return b[expressed] - a[expressed]
-            })
-            .attr("class", function (d) {
-                return "numbers " + d.IDENT;
-            })
-            .attr("text-anchor", "middle")
-            .attr("x", function (d, i) {
-                var fraction = (chartInnerWidth / csvData.length);
-                return i * fraction + (fraction - 1) / 2 + leftPadding;
-            })
-            .attr("y", function (d) {
-                return chartHeightLess - yScale(parseFloat(d[expressed])) - 5;
-            })
-            .text(function (d) {
-                return d[expressed];
-            });
-
-        //create a text element for the chart title
-        var chartTitle = chart.append("text")
-            .attr("x", 225)
-            .attr("y", 60)
-            .attr("class", "chartTitle")
-            .text(expressed + " in Each ARTCC");
-
-        //create vertical axis generator
-        var yAxis = d3.axisLeft()
-            .scale(yScale);
-
-        //place axis
-        /*
-        var axis = chart.append("g")
-            .attr("class", "axis")
-            .attr("transform", translate)
-            .call(yAxis);
-            */
-
-        //create frame for chart border
-        var chartFrame = chart.append("rect")
-            .attr("class", "chartFrame")
-            .attr("width", chartInnerWidth)
-            .attr("height", chartInnerHeight)
-            .attr("transform", translate);
-
-        //set bar positions, heights, and colors
-        updateChart(bars, csvData.length, colorScale);
-
-    };
-
-    //=====================================================================
-
-    function setGraticule(map, path) {
-        //create graticule generator
-        var graticule = d3.geoGraticule()
-            .step([5, 5]); //place graticule lines every 5 degrees of longitude and latitude
-
-        //create graticule background
-        var gratBackground = map.append("path")
-            .datum(graticule.outline()) //bind graticule background
-            .attr("class", "gratBackground") //assign class for styling
-            .attr("d", path) //project graticule
-
-        //create graticule lines
-        var gratLines = map.selectAll(".gratLines") //select graticule elements that will be created
-            .data(graticule.lines()) //bind graticule lines to each element to be created
-            .enter() //create an element for each datum
-            .append("path") //append each element to the svg as a path element
-            .attr("class", "gratLines") //assign class for styling
-            .attr("d", path); //project graticule lines
-    };
-
-    //=====================================================================
-
     function setEnumerationUnits(centersTopo, map, path, colorScale) {
         //add ARTCC Centers to map
         var center = map.selectAll(".centers")
@@ -294,7 +167,7 @@
             .enter()
             .append("path")
             .attr("class", function (d) {
-                return "centers " + d.properties.artcc;
+                return "centers " + d.properties.IDENT;
             })
             .attr("d", path)
             .style("fill", function (d) {
@@ -362,7 +235,87 @@
 
     //=====================================================================
 
-    //Example 1.4 line 14...dropdown change event handler
+    //function to create coordinated bar chart
+    function setChart(csvData, colorScale) {
+
+        var yScale = d3.scaleLinear()
+            .range([0, chartHeightLess - topBottomPadding])
+            .domain([50, 0]);
+
+        //create a second svg element to hold the bar chart
+        var chart = d3.select("body")
+            .append("svg")
+            .attr("width", chartWidth)
+            .attr("height", chartHeight)
+            .attr("class", "chart");
+
+        //create a rectangle for chart background fill
+        var chartBackground = chart.append("rect")
+            .attr("class", "chartBackground")
+            .attr("width", chartInnerWidth)
+            .attr("height", chartInnerHeight)
+            .attr("transform", translate);
+
+        //set bars for each province
+        var bars = chart.selectAll(".bar")
+            .data(csvData)
+            .enter()
+            .append("rect")
+            .sort(function (a, b) {
+                return b[expressed] - a[expressed]
+            })
+            .attr("class", function (d) {
+                return "bar " + d.IDENT;
+            })
+            .attr("width", chartInnerWidth / csvData.length - 1);
+
+        //create a text element for the chart title
+        var chartTitle = chart.append("text")
+            .attr("x", 845)
+            .attr("y", 40)
+            .attr("class", "chartTitle")
+            .attr("text-anchor", "end")
+            .text(expressed + " in Each ARTCC");
+
+        //create frame for chart border
+        var chartFrame = chart.append("rect")
+            .attr("class", "chartFrame")
+            .attr("width", chartInnerWidth)
+            .attr("height", chartInnerHeight)
+            .attr("transform", translate);
+
+        //set bar positions, heights, and colors
+        updateChart(bars, csvData.length, colorScale);
+    };
+
+    //=====================================================================
+
+    // function to dynamically update the domain for different data sets
+    function domainMinMax(attribute, csvData) {
+
+        //create empty array
+        minMaxArray = [];
+
+        //put each data point from the selected CSV set into the array and sort the array from maximum to minimum
+        for (var m = 0; m < csvData.length; m++) {
+            minMaxArray.push(parseFloat(csvData[m][attribute]));
+            minMaxArray.sort(function (a, b) {
+                return b - a
+            })
+        };
+
+        //name the first item in the sorted array as the maximum and the last item as the minimum, then store those two values as an array
+        var attrMax = minMaxArray[0];
+        var attrMin = minMaxArray[csvData.length - 1];
+        domainArray = [attrMax, attrMin]
+
+        return domainArray;
+
+    }
+
+    //=====================================================================
+
+    //dropdown change event handler
     function changeAttribute(attribute, csvData) {
         //change the expressed attribute
         expressed = attribute;
@@ -387,48 +340,53 @@
                 return b[expressed] - a[expressed];
             });
 
-        updateChart(bars, csvData.length, colorScale);
+        domainMinMax(attribute, csvData);
 
-        /*
-        
-                //Sort, resize, and recolor bars
-                var bars = d3.selectAll(".bar")
-                    //Sort bars
-                    .sort(function (a, b) {
-                        return b[expressed] - a[expressed];
-                    })
-                    .attr("x", function (d, i) {
-                        return i * (chartInnerWidth / csvData.length) + leftPadding;
-                    })
-                    //resize bars
-                    .attr("height", function (d, i) {
-                        return chartHeightLess - yScale(parseFloat(d[expressed]));
-                    })
-                    .attr("y", function (d, i) {
-                        return yScale(parseFloat(d[expressed])) + topBottomPadding;
-                    })
-                    //recolor bars
-                    .style("fill", function (d) {
-                        var value = d[expressed];
-                        if (value) {
-                            return colorScale(value);
-                        } else {
-                            return "#ccc";
-                        }
-                    });
-        
-                    */
+        //create empty array
+        //loop through to fill array with csvData
+        //return the max of the array as domainMax
+        //return the min of the array as domainMin
+
+        /*minMaxArray = [];
+
+        for (var m = 0; m < csvData.length; m++) {
+            minMaxArray.push(parseFloat(csvData[m][attribute]));
+            minMaxArray.sort(function (a, b) {
+                return b - a
+            })
+        };
+
+        var attrMax = minMaxArray[0];
+        var attrMin = minMaxArray[csvData.length - 1];
+        domainArray = [attrMax, attrMin]
+
+        console.log(domainArray)
+*/
+        updateChart(bars, csvData.length, colorScale);
     };
+
+    //=====================================================================
 
     //function to position, size, and color bars in chart
     function updateChart(bars, n, colorScale) {
+
+        //determine if the minimum value is less than zero, if it is, set the domain minimum as 0 instead        
+        if ((domainArray[1] - domainArray[0] * 0.1) < 0) {
+            var domainMin = 0;
+        } else domainMin = (domainArray[1] - domainArray[0] * 0.1);
+
+        //dynamically upate the domain according to the range of values in the selected data set
+        var yScale = d3.scaleLinear()
+            .range([0, chartHeightLess - topBottomPadding])
+            .domain([Math.round((domainArray[0] + domainArray[0] * 0.05)), domainMin]);
+
         //position bars
         bars.attr("x", function (d, i) {
             return i * (chartInnerWidth / n) + leftPadding;
         })
             //size/resize bars
             .attr("height", function (d, i) {
-                return chartHeightLess - yScale(parseFloat(d[expressed]));
+                return chartHeightLess - yScale(parseFloat(d[expressed])) - topBottomPadding;
             })
             .attr("y", function (d, i) {
                 return yScale(parseFloat(d[expressed])) + topBottomPadding;
@@ -443,12 +401,29 @@
                 }
             });
 
-        console.log('run');
+        //remove the previous axis so the new one can be drawn
+        d3.select("#axisLine").remove()
+
+        //draw the axis on the chart
+        var chart = d3.select(".chart")
+            .append("svg")
+
+        var yAxis = d3.axisLeft()
+            .scale(yScale);
+
+        //place axis
+        var axis = chart.append("g")
+            .attr("class", "axis")
+            .attr("id", "axisLine")
+            .attr("transform", translate)
+            .call(yAxis);
 
         //add text to chart title
         var chartTitle = d3.select(".chartTitle")
             .text(expressed + " in Each ARTCC");
     };
+
+    //=====================================================================
 
 
 })(); //last line of main.js

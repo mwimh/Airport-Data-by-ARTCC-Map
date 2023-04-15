@@ -3,24 +3,23 @@
     //pseudo-global variables
     var attrArray = ["Total Passengers (Millions)", "Total Cargo Weight (Millions of lbs)", "Average # Miles Flown per Passenger", "% of Flights Delayed", "% of Flights Cancelled"]; //list of attributes
     var expressed = attrArray[0]; //initial attribute
+    var domainArray = [49.35, 2.72]
 
     //chart frame dimensions
     var chartWidth = window.innerWidth * 0.45,
         chartHeight = chartWidth * 0.6 * (1 + 1 / 9),
-        chartHeightLess = chartHeight - 10,
-        leftPadding = 10,
+        leftPadding = 45,
         rightPadding = 10,
         topBottomPadding = 10,
+        chartHeightLess = chartHeight - topBottomPadding,
         chartInnerWidth = chartWidth - leftPadding - rightPadding,
         chartInnerHeight = chartHeight - topBottomPadding * 2,
         translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
 
-
-
     //create a scale to size bars proportionally to frame and for axis
-    var yScale = d3.scaleLinear()
-        .range([0, chartHeight])
-        .domain([0, 60]);
+    //var yScale = d3.scaleLinear()
+    //    .range([0, chartHeightLess - topBottomPadding])
+    //    .domain([50, 0]);
 
     //begin script when window loads
     window.onload = setMap();
@@ -238,6 +237,11 @@
 
     //function to create coordinated bar chart
     function setChart(csvData, colorScale) {
+
+        var yScale = d3.scaleLinear()
+            .range([0, chartHeightLess - topBottomPadding])
+            .domain([50, 0]);
+
         //create a second svg element to hold the bar chart
         var chart = d3.select("body")
             .append("svg")
@@ -258,43 +262,17 @@
             .enter()
             .append("rect")
             .sort(function (a, b) {
-                return a[expressed] - b[expressed]
+                return b[expressed] - a[expressed]
             })
             .attr("class", function (d) {
                 return "bar " + d.IDENT;
             })
             .attr("width", chartInnerWidth / csvData.length - 1);
 
-
-        //annotate bars with attribute value text
-        /*var numbers = chart.selectAll(".numbers")
-            .data(csvData)
-            .enter()
-            .append("text")
-            .sort(function (a, b) {
-                return b[expressed] - a[expressed]
-            })
-            .attr("class", function (d) {
-                return "numbers " + d.IDENT;
-            })
-            .attr("text-anchor", "middle")
-            .attr("x", function (d, i) {
-                var fraction = (chartInnerWidth / csvData.length);
-                return Math.round(i * fraction + (fraction - 1) / 2 + leftPadding);
-            })
-            .attr("y", function (d) {
-                return Math.round(chartHeightLess - yScale(parseFloat(d[expressed])) - 5);
-            })
-            .text(function (d) {
-                return d[expressed];
-            });
-
-        console.log(numbers)
-*/
         //create a text element for the chart title
         var chartTitle = chart.append("text")
-            .attr("x", 835)
-            .attr("y", 60)
+            .attr("x", 845)
+            .attr("y", 40)
             .attr("class", "chartTitle")
             .attr("text-anchor", "end")
             .text(expressed + " in Each ARTCC");
@@ -309,6 +287,31 @@
         //set bar positions, heights, and colors
         updateChart(bars, csvData.length, colorScale);
     };
+
+    //=====================================================================
+
+    // function to dynamically update the domain for different data sets
+    function domainMinMax(attribute, csvData) {
+
+        //create empty array
+        minMaxArray = [];
+
+        //put each data point from the selected CSV set into the array and sort the array from maximum to minimum
+        for (var m = 0; m < csvData.length; m++) {
+            minMaxArray.push(parseFloat(csvData[m][attribute]));
+            minMaxArray.sort(function (a, b) {
+                return b - a
+            })
+        };
+
+        //name the first item in the sorted array as the maximum and the last item as the minimum, then store those two values as an array
+        var attrMax = minMaxArray[0];
+        var attrMin = minMaxArray[csvData.length - 1];
+        domainArray = [attrMax, attrMin]
+
+        return domainArray;
+
+    }
 
     //=====================================================================
 
@@ -334,9 +337,31 @@
         var bars = d3.selectAll(".bar")
             //Sort bars
             .sort(function (a, b) {
-                return a[expressed] - b[expressed];
+                return b[expressed] - a[expressed];
             });
 
+        domainMinMax(attribute, csvData);
+
+        //create empty array
+        //loop through to fill array with csvData
+        //return the max of the array as domainMax
+        //return the min of the array as domainMin
+
+        /*minMaxArray = [];
+
+        for (var m = 0; m < csvData.length; m++) {
+            minMaxArray.push(parseFloat(csvData[m][attribute]));
+            minMaxArray.sort(function (a, b) {
+                return b - a
+            })
+        };
+
+        var attrMax = minMaxArray[0];
+        var attrMin = minMaxArray[csvData.length - 1];
+        domainArray = [attrMax, attrMin]
+
+        console.log(domainArray)
+*/
         updateChart(bars, csvData.length, colorScale);
     };
 
@@ -344,6 +369,17 @@
 
     //function to position, size, and color bars in chart
     function updateChart(bars, n, colorScale) {
+
+        //determine if the minimum value is less than zero, if it is, set the domain minimum as 0 instead        
+        if ((domainArray[1] - domainArray[0] * 0.1) < 0) {
+            var domainMin = 0;
+        } else domainMin = (domainArray[1] - domainArray[0] * 0.1);
+
+        //dynamically upate the domain according to the range of values in the selected data set
+        var yScale = d3.scaleLinear()
+            .range([0, chartHeightLess - topBottomPadding])
+            .domain([Math.round((domainArray[0] + domainArray[0] * 0.05)), domainMin]);
+
         //position bars
         bars.attr("x", function (d, i) {
             return i * (chartInnerWidth / n) + leftPadding;
@@ -364,6 +400,23 @@
                     return "#ccc";
                 }
             });
+
+        //remove the previous axis so the new one can be drawn
+        d3.select("#axisLine").remove()
+
+        //draw the axis on the chart
+        var chart = d3.select(".chart")
+            .append("svg")
+
+        var yAxis = d3.axisLeft()
+            .scale(yScale);
+
+        //place axis
+        var axis = chart.append("g")
+            .attr("class", "axis")
+            .attr("id", "axisLine")
+            .attr("transform", translate)
+            .call(yAxis);
 
         //add text to chart title
         var chartTitle = d3.select(".chartTitle")
