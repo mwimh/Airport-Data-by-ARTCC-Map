@@ -180,8 +180,6 @@
             })
             .on("mouseover", function (event, d) {
                 highlight(d.properties);
-                console.log(d)
-                console.log(d.properties)
             })
             .on("mouseout", function (event, d) {
                 dehighlight(d.properties);
