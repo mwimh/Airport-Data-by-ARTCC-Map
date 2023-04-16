@@ -180,10 +180,13 @@
             })
             .on("mouseover", function (event, d) {
                 highlight(d.properties);
+                console.log(d)
+                console.log(d.properties)
             })
             .on("mouseout", function (event, d) {
                 dehighlight(d.properties);
-            });
+            })
+            .on("mousemove", moveLabel);
 
         var desc = center.append("desc")
             .text('{"stroke": "#000", "stroke-width": "0.5px"}');
@@ -283,7 +286,8 @@
             })
             .on("mouseout", function (event, d) {
                 dehighlight(d);
-            });
+            })
+            .on("mousemove", moveLabel);
 
 
         //create a text element for the chart title
@@ -438,6 +442,8 @@
         var selected = d3.selectAll("." + props.IDENT)
             .style("stroke", "rgb(255, 167, 67)")
             .style("stroke-width", "4");
+
+        setLabel(props);
     };
 
     //=====================================================================
@@ -461,6 +467,43 @@
 
             return styleObject[styleName];
         };
+
+        d3.select(".infolabel")
+            .remove();
+    };
+
+    //=====================================================================
+
+
+    //function to create dynamic label
+    function setLabel(props) {
+        //label content
+        var labelAttribute = "<h1>" + props[expressed] +
+            "</h1><b>" + expressed + "</b>";
+
+        //create info label div
+        var infolabel = d3.select("body")
+            .append("div")
+            .attr("class", "infolabel")
+            .attr("id", props.IDENT + "_label")
+            .html(labelAttribute);
+
+        var centerName = infolabel.append("div")
+            .attr("class", "labelname")
+            .html(props.NAME + " ---   in the " + props.IDENT + " ARTCC");
+    };
+
+    //=====================================================================
+
+    //function to move info label with mouse
+    function moveLabel() {
+        //use coordinates of mousemove event to set label coordinates
+        var x = event.clientX + 10,
+            y = event.clientY - 75;
+
+        d3.select(".infolabel")
+            .style("left", x + "px")
+            .style("top", y + "px");
     };
 
 })(); //last line of main.js

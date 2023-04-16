@@ -105,3 +105,20 @@
 option {
     font-weight: normal;
 }
+
+.infolabel {
+    position: absolute;
+    height: fit-content;
+    min-width: 150px;
+    color: #fff;
+    background-color: #4d4d4d;
+    border: solid #fff;
+    padding: 5px 10px;
+}
+
+.infolabel h1 {
+    margin: 0 7px 0 0;
+    padding: 0;
+    display: inline-block;
+    line-height: 1em;
+}
