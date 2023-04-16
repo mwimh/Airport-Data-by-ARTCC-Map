@@ -177,6 +177,8 @@
                 } else {
                     return "#ccc";
                 }
+                var desc = regions.append("desc")
+                    .text('{"stroke": "#000", "stroke-width": "0.5px"}');
             })
             .on("mouseover", function (event, d) {
                 highlight(d.properties);
@@ -392,15 +394,14 @@
                 } else {
                     return "#ccc";
                 }
-            });
-            
+            })
 
         //remove the previous axis so the new one can be drawn
-        d3.select("#axisLine").remove();
-  
+        d3.select("#axisLine").remove()
+
         //draw the axis on the chart
         var chart = d3.select(".chart")
-            .append("svg");
+            .append("svg")
 
         var yAxis = d3.axisLeft()
             .scale(yScale);
@@ -423,11 +424,10 @@
     function highlight(props) {
         //change stroke
         var selected = d3.selectAll("." + props.IDENT)
-            .style("stroke", "blue")
-            .style("stroke-width", "5");
+            .style("stroke", "white")
+            .style("stroke-width", "3");
 
-            console.log('highlight')
+        console.log('highlight');
     };
-
 
 })(); //last line of main.js

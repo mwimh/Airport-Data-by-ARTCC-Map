@@ -33,16 +33,16 @@
 }
 
 .centers {
-    stroke:rgb(75, 75, 75);
-    stroke-width: 1.75px;
+    stroke:rgb(0, 0, 0);
+    stroke-width: 0.75px;
     stroke-linecap: round;
 }
 
 .states {
-    fill-opacity: 0.0;
+    fill: none;
     stroke:rgb(0, 0, 0);
     stroke-width: 1.0px;
-    stroke-opacity: 0.3;
+    stroke-opacity: 0.15;
 }
 
 .points {
@@ -78,7 +78,7 @@
 .axis path,
 .axis line {
     fill: none;
-    stroke: #999;
+    stroke: #6e6e6e;
     stroke-width: 1px;
     shape-rendering: crispEdges;
 }
