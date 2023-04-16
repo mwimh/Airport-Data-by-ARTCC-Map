@@ -1,7 +1,7 @@
 //First line of main.js...wrap everything in a self-executing anonymous function to move to local scope
 (function () {
     //pseudo-global variables
-    var attrArray = ["Total Passengers (Millions)", "Total Cargo Weight (Millions of lbs)", "Average # Miles Flown per Passenger", "% of Flights Delayed", "% of Flights Cancelled"]; //list of attributes
+    var attrArray = ["Millions of Passengers Departed", "Millions of Pounds of Cargo", "Miles (avg) to Landing per Passenger", "% of Flights Delayed", "% of Flights Cancelled"]; //list of attributes
     var expressed = attrArray[0]; //initial attribute
     var domainArray = [49.35, 2.72]
 
@@ -15,11 +15,6 @@
         chartInnerWidth = chartWidth - leftPadding - rightPadding,
         chartInnerHeight = chartHeight - topBottomPadding * 2,
         translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
-
-    //create a scale to size bars proportionally to frame and for axis
-    //var yScale = d3.scaleLinear()
-    //    .range([0, chartHeightLess - topBottomPadding])
-    //    .domain([50, 0]);
 
     //begin script when window loads
     window.onload = setMap();
@@ -180,7 +175,15 @@
             })
             .on("mouseover", function (event, d) {
                 highlight(d.properties);
-            });
+            })
+            .on("mouseout", function (event, d) {
+                dehighlight(d.properties);
+            })
+            .on("mousemove", moveLabel);
+
+        var desc = center.append("desc")
+            .text('{"stroke": "#000", "stroke-width": "0.5px"}');
+
     };
 
     //=====================================================================
@@ -273,7 +276,12 @@
             .attr("width", chartInnerWidth / csvData.length - 1)
             .on("mouseover", function (event, d) {
                 highlight(d);
-            });
+            })
+            .on("mouseout", function (event, d) {
+                dehighlight(d);
+            })
+            .on("mousemove", moveLabel);
+
 
         //create a text element for the chart title
         var chartTitle = chart.append("text")
@@ -292,6 +300,9 @@
 
         //set bar positions, heights, and colors
         updateChart(bars, csvData.length, colorScale);
+
+        var desc = bars.append("desc")
+            .text('{"stroke": "none", "stroke-width": "0px"}');
     };
 
     //=====================================================================
@@ -366,7 +377,7 @@
         //determine if the minimum value is less than zero, if it is, set the domain minimum as 0 instead        
         if ((domainArray[1] - domainArray[0] * 0.1) < 0) {
             var domainMin = 0;
-        } else domainMin = (domainArray[1] - domainArray[0] * 0.1);
+        } else domainMin = (domainArray[1] - domainArray[0] * 0.05);
 
         //dynamically upate the domain according to the range of values in the selected data set
         var yScale = d3.scaleLinear()
@@ -392,15 +403,14 @@
                 } else {
                     return "#ccc";
                 }
-            });
-            
+            })
 
         //remove the previous axis so the new one can be drawn
-        d3.select("#axisLine").remove();
-  
+        d3.select("#axisLine").remove()
+
         //draw the axis on the chart
         var chart = d3.select(".chart")
-            .append("svg");
+            .append("svg")
 
         var yAxis = d3.axisLeft()
             .scale(yScale);
@@ -423,11 +433,70 @@
     function highlight(props) {
         //change stroke
         var selected = d3.selectAll("." + props.IDENT)
-            .style("stroke", "blue")
-            .style("stroke-width", "5");
+            .style("stroke", "rgb(255, 167, 67)")
+            .style("stroke-width", "4");
 
-            console.log('highlight')
+        setLabel(props);
     };
 
+    //=====================================================================
+
+    //function to reset the element style on mouseout
+    function dehighlight(props) {
+        var selected = d3.selectAll("." + props.IDENT)
+            .style("stroke", function () {
+                return getStyle(this, "stroke")
+            })
+            .style("stroke-width", function () {
+                return getStyle(this, "stroke-width")
+            });
+
+        function getStyle(element, styleName) {
+            var styleText = d3.select(element)
+                .select("desc")
+                .text();
+
+            var styleObject = JSON.parse(styleText);
+
+            return styleObject[styleName];
+        };
+
+        d3.select(".infolabel")
+            .remove();
+    };
+
+    //=====================================================================
+
+
+    //function to create dynamic label
+    function setLabel(props) {
+        //label content
+        var labelAttribute = "<h1>" + props[expressed] +
+            "</h1><b>" + expressed + "</b>";
+
+        //create info label div
+        var infolabel = d3.select("body")
+            .append("div")
+            .attr("class", "infolabel")
+            .attr("id", props.IDENT + "_label")
+            .html(labelAttribute);
+
+        var centerName = infolabel.append("div")
+            .attr("class", "labelname")
+            .html(props.NAME + " ---   in the " + props.IDENT + " ARTCC");
+    };
+
+    //=====================================================================
+
+    //function to move info label with mouse
+    function moveLabel() {
+        //use coordinates of mousemove event to set label coordinates
+        var x = event.clientX + 10,
+            y = event.clientY - 75;
+
+        d3.select(".infolabel")
+            .style("left", x + "px")
+            .style("top", y + "px");
+    };
 
 })(); //last line of main.js

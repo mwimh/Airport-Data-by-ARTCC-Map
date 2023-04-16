@@ -1,4 +1,4 @@
-﻿id,Total Passengers (Millions),Total Cargo Weight (Millions of lbs),Average # Miles Flown per Passenger,% of Flights Delayed,% of Flights Cancelled,NAME,IDENT
+﻿id,Millions of Passengers Departed,Millions of Pounds of Cargo,Miles (avg) to Landing per Passenger,% of Flights Delayed,% of Flights Cancelled,NAME,IDENT
 15,10.63,30.99,908,13.85,0.68,"Salt Lake City, UT",ZLC
 12,20.19,146.13,1495,17.08,0.69,"Seattle, WA",ZSE
 9,22.02,67.01,1068,18.45,0.69,"Phoenix, AZ",ZAB

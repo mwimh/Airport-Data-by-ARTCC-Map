@@ -1,7 +1,7 @@
 //First line of main.js...wrap everything in a self-executing anonymous function to move to local scope
 (function () {
     //pseudo-global variables
-    var attrArray = ["Total Passengers (Millions)", "Total Cargo Weight (Millions of lbs)", "Average # Miles Flown per Passenger", "% of Flights Delayed", "% of Flights Cancelled"]; //list of attributes
+    var attrArray = ["Millions of Passengers Departed", "Millions of Pounds of Cargo", "Miles (avg) to Landing per Passenger", "% of Flights Delayed", "% of Flights Cancelled"]; //list of attributes
     var expressed = attrArray[0]; //initial attribute
     var domainArray = [49.35, 2.72]
 
@@ -15,11 +15,6 @@
         chartInnerWidth = chartWidth - leftPadding - rightPadding,
         chartInnerHeight = chartHeight - topBottomPadding * 2,
         translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
-
-    //create a scale to size bars proportionally to frame and for axis
-    //var yScale = d3.scaleLinear()
-    //    .range([0, chartHeightLess - topBottomPadding])
-    //    .domain([50, 0]);
 
     //begin script when window loads
     window.onload = setMap();
@@ -471,7 +466,6 @@
     };
 
     //=====================================================================
-
 
     //function to create dynamic label
     function setLabel(props) {
