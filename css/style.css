@@ -1,23 +1,24 @@
 .map {
-    border: medium solid #999;
-    margin: 10px 0 0 20px;
+    border: thick solid #525252;
+    margin: 100px 0 0 20px;
+
 }
 
 .chart {
-    background-color: rgba(128,128,128,.2);
-    border: medium solid #999;
+    background-color: rgb(240, 240, 240);
+    border: thick solid #525252;
     float: right;
-    margin: 10px 20px 0 0;
+    margin: 100px 20px 0 0;
 }
 
 .backgnd {
-    fill:rgb(241, 225, 203);;
+    fill: rgb(241, 225, 203);
     stroke: black;
     stroke-width: 0.5px;
 }
 
 .bgstates {
-    fill:rgb(255, 255, 255);
+    fill: rgb(177, 193, 223);
 }
 
 .gratLines {
@@ -28,44 +29,58 @@
 }
 
 .gratBackground {
-    fill:rgb(177, 193, 223);
-    fill-opacity: 0.8;
+    fill: rgb(177, 193, 223);
+
 }
 
 .centers {
-    stroke:rgb(0, 0, 0);
+    stroke: rgb(0, 0, 0);
     stroke-width: 0.75px;
     stroke-linecap: round;
+    fill-opacity: 0.8;
 }
 
 .states {
     fill: none;
-    stroke:rgb(0, 0, 0);
+    stroke: rgb(0, 0, 0);
     stroke-width: 1.0px;
-    stroke-opacity: 0.15;
+    stroke-opacity: 0.7;
 }
 
 .points {
-    fill:rgb(255, 255, 255);
-    stroke: black;
+    fill: rgba(255, 130, 245, 0.534);
+    stroke: rgb(191, 45, 236);
     stroke-width: 2px;
+    z-index: -1;
 }
 
 .numbers {
     fill: rgb(0, 0, 0);
     font-family: sans-serif;
-    font-size: 0.75em; 
+    font-size: 0.75em;
 }
 
 .chartBackground {
-    fill: rgba(184, 184, 184, 0.2);
+    fill: rgba(75, 75, 75, 0.3);
 }
 
 .chartTitle {
-    font-family: sans-serif;
+    font-family: Georgia, serif;
     font-size: 1.8em;
-    font-weight: bold;
     text-decoration: underline;
+}
+
+.mapTitle {
+    display: table;
+    font-family: Georgia, serif;
+    font-size: 1.6em;
+    text-decoration: underline;
+    z-index: 11;
+    padding: 5px;
+    background-color: #525252;
+    top: 250px;
+    left: 100px;
+
 }
 
 .chartFrame {
@@ -91,10 +106,10 @@
 
 .dropdown {
     position: absolute;
-    top: 30px;
+    top: 130px;
     left: 40px;
     z-index: 10;
-    font-family: sans-serif;
+    font-family: Georgia, serif;
     font-size: 1em;
     font-weight: bold;
     padding: 2px;
@@ -121,4 +136,104 @@ option {
     padding: 0;
     display: inline-block;
     line-height: 1em;
+}
+
+
+.infoBox {
+    line-height: 0px;
+    position: fixed;
+    top: 60%;
+    left: 80px;
+    z-index: 10;
+    height: fit-content;
+    width: fit-content;
+    background-color: #ffffff;
+    border: 2px solid #000000;
+    padding: 10px;
+}
+
+.cntrName {
+    font-weight: bold;
+    color: #1b2286;
+}
+
+.callsign {
+    font-style: italic;
+    font-size: smaller;
+}
+
+.labLegend {
+    position: absolute;
+    top: 200px;
+    right: 60px;
+    z-index: 10;
+    height: fit-content;
+    min-width: 150px;
+    color: #fff;
+    background-color: #4d4d4d;
+    border: solid #fff;
+    padding: 5px 10px;
+}
+
+.labLegend h1 {
+    margin: 0 7px 0 0;
+    padding: 0;
+    display: inline-block;
+    line-height: 1em;
+}
+
+.moreInfo {
+    font-size: small;
+    color: rgb(195, 158, 255)
+}
+
+.backgroundImg {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    opacity: 0.2;
+    size: 100%;
+}
+
+.pageTitle {
+    font-size: 36px;
+    font-family: Georgia, serif;
+    z-index: 11;
+    position: fixed;
+    top: 15px;
+    left: 65px;
+    text-align: center;
+}
+
+.titleBack {
+    background-color: #ffffff;
+    height: 70px;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+}
+
+.titleFrame {
+    stroke: #535353;
+    stroke-width: 5px;
+    z-index: 10;
+    height: 70px;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    fill: none;
+}
+
+body {
+    background-color: #e7e7e7;
+    background-image: url("/img/background.jpg");
+    background-size: cover;
+
+}
+
+.titleSub {
+    font-size: 20pt;
+    font-style: italic;
+    text-decoration: underline;
+    vertical-align: text-top;
 }

@@ -25,12 +25,14 @@
         //map frame dimensions
         var width = window.innerWidth * 0.5,
             height = width * 0.6;
+
         //create new svg container for the map
         var map = d3.select("body")
             .append("svg")
             .attr("class", "map")
             .attr("width", width)
             .attr("height", height);
+
         //create Albers equal area conic projection centered on the continental United States
         var projection = d3.geoAlbers()
             .center([0, 38.5])
@@ -38,6 +40,7 @@
             .parallels([20, 45])
             .scale(height * 1.9)
             .translate([width / 2, height / 2]);
+
         var path = d3.geoPath()
             .projection(projection);
 
@@ -63,7 +66,7 @@
             var centersTopo = topojson.feature(artccsData, artccsData.objects.ARTCCs).features,
                 statesTopo = topojson.feature(conusData, conusData.objects.CONUS),
                 backCount = topojson.feature(bGCount, bGCount.objects.BackgroundCountries),
-                pointsTopo = topojson.feature(cntrPoints, cntrPoints.objects.points);
+                pointsTopo = topojson.feature(cntrPoints, cntrPoints.objects.points).features;
 
             //add background countries to map
             var countries = map.append("path")
@@ -83,8 +86,13 @@
             //create the color scale
             var colorScale = makeColorScale(csvData)
 
-            //add enumeration units to the map
-            setEnumerationUnits(centersTopo, map, path, colorScale);
+/*
+            //add city points overlay to map
+            var points = map.append("path")
+                .datum(pointsTopo)
+                .attr("class", "points")
+                .attr("d", path)
+*/
 
             //add States overlay to map
             var states = map.append("path")
@@ -92,15 +100,26 @@
                 .attr("class", "states")
                 .attr("d", path);
 
-            //add city points overlay to map
-            var points = map.append("path")
-                .datum(pointsTopo)
-                .attr("class", "points")
-                .attr("d", path);
+            //create a text element for the chart title
+            var mapTitle = map.append("text")
+                .attr("x", width - 450)
+                .attr("y", 45)
+                .attr("class", "mapTitle")
+                .attr("text-anchor", "start")
+                .text("ARTCCs Ranked by Attribute");
+
+            //add enumeration units to the map
+            setEnumerationUnits(centersTopo, map, path, colorScale);
+
+            //**************************************************************************************************************
+            createPoints(pointsTopo, map, path);
+            //**************************************************************************************************************
 
             setChart(csvData, colorScale);
 
             createDropdown(csvData);
+
+            pageTitle()
 
         };
     };
@@ -173,18 +192,63 @@
                     return "#ccc";
                 }
             })
-            .on("mouseover", function (event, d) {
+            .on("mouseover.a", function (event, d) {
                 highlight(d.properties);
             })
-            .on("mouseout", function (event, d) {
+            .on("mouseover.b", function (event) {
+                labelLegend();
+            })
+            //.on("mouseover.c", function (event, d) {
+            //    infoBox(d.properties);
+            //})
+            .on("mouseout.a", function (event, d) {
                 dehighlight(d.properties);
             })
-            .on("mousemove", moveLabel);
+            .on("mouseout.b", function (event) {
+                labLegRemove();
+            })
+            //.on("mouseout.c", function (event) {
+            //    infoBoxRemove();
+            //})
+            .on("click", function (event, d) {
+                addedInfo(d.properties);
+            })
+            .on("mousemove", moveLabel)
 
         var desc = center.append("desc")
             .text('{"stroke": "#000", "stroke-width": "0.5px"}');
 
     };
+
+
+    //**************************************************************************************************************
+    //=====================================================================
+
+    function createPoints(pointsTopo, map, path) {
+        //add city points overlay to map
+        var points = map.selectAll(".points")
+            .data(pointsTopo)
+            .enter()
+            .append("path")
+            .attr("class", function (d) {
+                return "points " + d.properties.cityName;
+            })
+            .attr("d", path)
+            .on("mouseover", function (event, d) {
+                //var c = 9;
+                infoBox(d.properties.cityName);
+                //console.log(d.properties.cityName);
+                //console.log('run');
+            })
+            .on("mouseout.c", function (event) {
+                infoBoxRemove();
+            })
+            .on("click", function (event, d) {
+                addedInfo(d.properties);
+            });
+    };
+    //**************************************************************************************************************
+
 
     //=====================================================================
 
@@ -274,18 +338,27 @@
                 return "bar " + d.IDENT;
             })
             .attr("width", chartInnerWidth / csvData.length - 1)
-            .on("mouseover", function (event, d) {
+            .on("mouseover.a", function (event, d) {
                 highlight(d);
             })
-            .on("mouseout", function (event, d) {
+            .on("mouseover.b", function (event) {
+                labelLegend();
+            })
+            .on("mouseout.a", function (event, d) {
                 dehighlight(d);
+            })
+            .on("mouseout.b", function (event) {
+                labLegRemove();
+            })
+            .on("click", function (event, d) {
+                addedInfo(d);
             })
             .on("mousemove", moveLabel);
 
 
         //create a text element for the chart title
         var chartTitle = chart.append("text")
-            .attr("x", 845)
+            .attr("x", chartWidth - 25)
             .attr("y", 40)
             .attr("class", "chartTitle")
             .attr("text-anchor", "end")
@@ -303,6 +376,7 @@
 
         var desc = bars.append("desc")
             .text('{"stroke": "none", "stroke-width": "0px"}');
+
     };
 
     //=====================================================================
@@ -424,7 +498,8 @@
 
         //add text to chart title
         var chartTitle = d3.select(".chartTitle")
-            .text(expressed + " in Each ARTCC");
+            .text(expressed + " per Airport");
+
     };
 
     //=====================================================================
@@ -433,7 +508,7 @@
     function highlight(props) {
         //change stroke
         var selected = d3.selectAll("." + props.IDENT)
-            .style("stroke", "rgb(255, 167, 67)")
+            .style("stroke", "rgb(255, 205, 23)")
             .style("stroke-width", "4");
 
         setLabel(props);
@@ -483,6 +558,10 @@
         var centerName = infolabel.append("div")
             .attr("class", "labelname")
             .html(props.NAME + " ---   in the " + props.IDENT + " ARTCC");
+
+        var moreInfo = centerName.append("div")
+            .attr("class", "moreInfo")
+            .html('Click the ARTCC, Airport, or Bar for more Airport Info!');
     };
 
     //=====================================================================
@@ -497,5 +576,77 @@
             .style("left", x + "px")
             .style("top", y + "px");
     };
+
+    //=====================================================================
+    //=====================================================================
+
+    //function to create label Legend
+    function labelLegend() {
+
+        //create info label div
+        var labLeg = d3.select("body")
+            .append("div")
+            .attr("class", "labLegend")
+            .attr("id", "labelLegend")
+            .html("<h1>###</h1><b> Selected Attribute</b>");
+
+        var legInfo = labLeg.append("div")
+            .attr("class", "labelname")
+            .html("<i><b>Airport City</b></i> ---   in the <i><b>'ZZZZ'</b></i> ARTCC");
+    };
+
+    //=====================================================================
+
+    function labLegRemove() {
+        d3.select("#labelLegend").remove();
+    }
+
+    //=====================================================================
+
+    //function to create dynamic info box
+    function infoBox(props) {
+        var infoContent = '<img src = "img/' + props + '.jpg"></img>';
+
+        //create info label div
+        var infoBox = d3.select("body")
+            .append("div")
+            .attr("class", "infoBox")
+            .attr("id", "infoBoxId")
+            .html(infoContent);
+    };
+
+    //=====================================================================
+
+    function infoBoxRemove() {
+        d3.select("#infoBoxId").remove();
+    }
+
+    //=====================================================================
+
+    function addedInfo(props) {
+        var url = 'https://www.airnav.com/airport/';
+        url = url + props.ICAO_ID;
+        window.open(url, '_blank');
+    }
+
+    //=====================================================================
+
+    function pageTitle() {
+        var titleText = d3.select("body")
+            .append("div")
+            .attr("class", "pageTitle")
+            .html('<img src="img/webTitle.jpg"></img> &nbsp &nbsp &nbsp <span class="titleSub">Attributes of the Top Airports in each U.S. Air Route Traffic Control Center </span>');
+            //.html('Busiest Airports in the United States - <span class="titleSub">Top Airport in each Air Route Traffic Control Center (ARTCC)</span>');
+
+        var titleBkgnd = d3.select("body")
+            .append("svg")
+            .attr("class", "titleBack")
+            .attr("width", window.innerWidth)
+
+        var chartFrame = titleBkgnd.append("rect")
+            .attr("class", "titleFrame")
+            .attr("width", window.innerWidth)
+
+    }
 
 })(); //last line of main.js
