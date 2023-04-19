@@ -18,7 +18,7 @@
 }
 
 .bgstates {
-    fill: rgb(177, 193, 223);
+    fill: rgb(255, 255, 255);
 }
 
 .gratLines {
@@ -37,7 +37,7 @@
     stroke: rgb(0, 0, 0);
     stroke-width: 0.75px;
     stroke-linecap: round;
-    fill-opacity: 0.8;
+    fill-opacity: 0.85;
 }
 
 .states {
@@ -50,14 +50,8 @@
 .points {
     fill: rgba(255, 130, 245, 0.534);
     stroke: rgb(191, 45, 236);
-    stroke-width: 2px;
+    stroke-width: 3px;
     z-index: -1;
-}
-
-.numbers {
-    fill: rgb(0, 0, 0);
-    font-family: sans-serif;
-    font-size: 0.75em;
 }
 
 .chartBackground {
@@ -66,8 +60,13 @@
 
 .chartTitle {
     font-family: Georgia, serif;
-    font-size: 1.8em;
+    font-size: 1.6em;
     text-decoration: underline;
+}
+
+
+.chartTitleBack {
+    fill: rgb(240, 240, 240);
 }
 
 .mapTitle {
@@ -76,11 +75,6 @@
     font-size: 1.6em;
     text-decoration: underline;
     z-index: 11;
-    padding: 5px;
-    background-color: #525252;
-    top: 250px;
-    left: 100px;
-
 }
 
 .chartFrame {
@@ -88,6 +82,10 @@
     stroke: #6e6e6e;
     stroke-width: 2px;
     shape-rendering: crispEdges;
+}
+
+.bars {
+    fill-opacity: 0.8;
 }
 
 .axis path,
@@ -106,8 +104,8 @@
 
 .dropdown {
     position: absolute;
-    top: 130px;
-    left: 40px;
+    top: 120px;
+    left: 405px;
     z-index: 10;
     font-family: Georgia, serif;
     font-size: 1em;
@@ -126,7 +124,7 @@ option {
     height: fit-content;
     min-width: 150px;
     color: #fff;
-    background-color: #4d4d4d;
+    background-color: #005092;
     border: solid #fff;
     padding: 5px 10px;
 }
@@ -141,8 +139,7 @@ option {
 
 .infoBox {
     line-height: 0px;
-    position: fixed;
-    top: 60%;
+    position: absolute;
     left: 80px;
     z-index: 10;
     height: fit-content;
@@ -170,7 +167,7 @@ option {
     height: fit-content;
     min-width: 150px;
     color: #fff;
-    background-color: #4d4d4d;
+    background-color: #005092;
     border: solid #fff;
     padding: 5px 10px;
 }
@@ -196,7 +193,7 @@ option {
 }
 
 .pageTitle {
-    font-size: 36px;
+    font-size: 30px;
     font-family: Georgia, serif;
     z-index: 11;
     position: fixed;
@@ -207,7 +204,6 @@ option {
 
 .titleBack {
     background-color: #ffffff;
-    height: 70px;
     position: fixed;
     top: 0px;
     left: 0px;
@@ -232,8 +228,59 @@ body {
 }
 
 .titleSub {
-    font-size: 20pt;
+    font-size: 18pt;
     font-style: italic;
     text-decoration: underline;
     vertical-align: text-top;
+}
+
+.mapTitleBack {
+    fill: rgba(255, 255, 255, 0.8);
+}
+
+.metadata {
+    font-family: Trebuchet MS, sans-serif;
+    font-size: 0.8em;
+    color:rgb(221, 221, 221);
+    line-height: 0.35;
+    position: fixed;
+    bottom: 10px;
+    right: 30px;
+}
+
+.metaBack {
+    background-color: #1b1b1b;
+    opacity: 0.5;
+    position: fixed;
+    bottom: 0px;
+    right: 0px;
+}
+
+.mapLegend {
+    position: relative;
+    bottom: 40px;
+    left: 25%;
+    max-width: 100px;
+}
+
+.addInfo {
+    font-family: Trebuchet MS, sans-serif;
+    font-size: 0.8em;
+    color:rgb(0, 0, 0);
+    line-height: 1.35;
+    position: absolute;
+    top: 71.5%;
+    left: 450px;
+    max-width: 1320px;
+    word-wrap: break-word;
+}
+
+.addInfoBack {
+    background-color: #ffffff;
+    opacity: 0.7;
+    position: absolute;
+    top: 72%;
+    left: 435px;
+    width: 1350px;
+    height: 120px;
 }

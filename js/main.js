@@ -3,7 +3,10 @@
     //pseudo-global variables
     var attrArray = ["Millions of Passengers Departed", "Millions of Pounds of Cargo", "Miles (avg) to Landing per Passenger", "% of Flights Delayed", "% of Flights Cancelled"]; //list of attributes
     var expressed = attrArray[0]; //initial attribute
-    var domainArray = [49.35, 2.72]
+    var domainArray = [49.35, 2.72] //min and max domain array for initial attribute
+
+console.log(window.innerHeight)
+console.log(window.innerWidth)
 
     //chart frame dimensions
     var chartWidth = window.innerWidth * 0.45,
@@ -41,6 +44,7 @@
             .scale(height * 1.9)
             .translate([width / 2, height / 2]);
 
+        //create map
         var path = d3.geoPath()
             .projection(projection);
 
@@ -50,7 +54,7 @@
         promises.push(d3.json("data/ARTCCs.topojson")); //load choropleth spatial data    
         promises.push(d3.json("data/CONUS.topojson")); //load state overlays spatial data
         promises.push(d3.json("data/BackgroundCountries.topojson")); //load background country spatial data 
-        promises.push(d3.json("data/points.topojson")); //load reference city points
+        promises.push(d3.json("data/points.topojson")); //load airport location points
         Promise.all(promises).then(callback);
 
         //assign data to variables
@@ -86,39 +90,37 @@
             //create the color scale
             var colorScale = makeColorScale(csvData)
 
-/*
-            //add city points overlay to map
-            var points = map.append("path")
-                .datum(pointsTopo)
-                .attr("class", "points")
-                .attr("d", path)
-*/
-
             //add States overlay to map
             var states = map.append("path")
                 .datum(statesTopo)
                 .attr("class", "states")
                 .attr("d", path);
 
+            //create background for map title
+            var mapTitleBack = map.append("rect")
+                .attr("class", "mapTitleBack")
+                .attr("width", 720)
+                .attr("height", 40)
+                .attr("x", 0)
+                .attr("y", 0)
+
             //create a text element for the chart title
             var mapTitle = map.append("text")
-                .attr("x", width - 450)
-                .attr("y", 45)
+                .attr("x", 20)
+                .attr("y", 30)
                 .attr("class", "mapTitle")
                 .attr("text-anchor", "start")
-                .text("ARTCCs Ranked by Attribute");
+                .text("ARTCCs Ranked by Attribute:");
 
             //add enumeration units to the map
             setEnumerationUnits(centersTopo, map, path, colorScale);
-
-            //**************************************************************************************************************
+            //add airport locations as points to map
             createPoints(pointsTopo, map, path);
-            //**************************************************************************************************************
-
+            //set chart attributes
             setChart(csvData, colorScale);
-
+            //create attribute dropdown
             createDropdown(csvData);
-
+            //generate static text and image elements on page
             pageTitle()
 
         };
@@ -126,6 +128,7 @@
 
     //=====================================================================
 
+    //generate graticule for the map
     function setGraticule(map, path) {
         //create graticule generator
         var graticule = d3.geoGraticule()
@@ -175,7 +178,7 @@
     //=====================================================================
 
     function setEnumerationUnits(centersTopo, map, path, colorScale) {
-        //add ARTCC Centers to map
+        //add ARTCC Centers to map and create events on mouseover, mouseout, and click
         var center = map.selectAll(".centers")
             .data(centersTopo)
             .enter()
@@ -196,34 +199,28 @@
                 highlight(d.properties);
             })
             .on("mouseover.b", function (event) {
-                labelLegend();
+                labelLegend(); //add static label legend
             })
-            //.on("mouseover.c", function (event, d) {
-            //    infoBox(d.properties);
-            //})
             .on("mouseout.a", function (event, d) {
                 dehighlight(d.properties);
             })
             .on("mouseout.b", function (event) {
-                labLegRemove();
+                labLegRemove(); //remove static label legend
             })
-            //.on("mouseout.c", function (event) {
-            //    infoBoxRemove();
-            //})
             .on("click", function (event, d) {
-                addedInfo(d.properties);
+                addedInfo(d.properties); //open new window with airport info on click
             })
             .on("mousemove", moveLabel)
 
+        //remove highlight
         var desc = center.append("desc")
             .text('{"stroke": "#000", "stroke-width": "0.5px"}');
 
     };
 
-
-    //**************************************************************************************************************
     //=====================================================================
 
+    //function to create points for each airport and events on mouseover, mouseout, and click
     function createPoints(pointsTopo, map, path) {
         //add city points overlay to map
         var points = map.selectAll(".points")
@@ -235,23 +232,19 @@
             })
             .attr("d", path)
             .on("mouseover", function (event, d) {
-                //var c = 9;
-                infoBox(d.properties.cityName);
-                //console.log(d.properties.cityName);
-                //console.log('run');
+                infoBox(d.properties.cityName); //add airport picture on mouseover
             })
             .on("mouseout.c", function (event) {
-                infoBoxRemove();
+                infoBoxRemove(); //remove airport picture on mouseout
             })
             .on("click", function (event, d) {
-                addedInfo(d.properties);
+                addedInfo(d.properties); //open new window with airport info on click
             });
     };
-    //**************************************************************************************************************
-
 
     //=====================================================================
 
+    //function to generate color scale based on data in the CSV file
     function makeColorScale(data) {
         var colorClasses = [
             '#f0f9e8',
@@ -308,6 +301,7 @@
     //function to create coordinated bar chart
     function setChart(csvData, colorScale) {
 
+        //set the initial scale
         var yScale = d3.scaleLinear()
             .range([0, chartHeightLess - topBottomPadding])
             .domain([50, 0]);
@@ -326,7 +320,7 @@
             .attr("height", chartInnerHeight)
             .attr("transform", translate);
 
-        //set bars for each province
+        //set bars for each province and events on mouseover, mouseout, and click
         var bars = chart.selectAll(".bar")
             .data(csvData)
             .enter()
@@ -342,26 +336,33 @@
                 highlight(d);
             })
             .on("mouseover.b", function (event) {
-                labelLegend();
+                labelLegend(); //add static label legend
             })
             .on("mouseout.a", function (event, d) {
                 dehighlight(d);
             })
             .on("mouseout.b", function (event) {
-                labLegRemove();
+                labLegRemove(); //remove static label legend
             })
             .on("click", function (event, d) {
-                addedInfo(d);
+                addedInfo(d); //open new window with airport info on click
             })
             .on("mousemove", moveLabel);
 
+        //create background for the chart title
+        var chartTitleBack = chart.append("rect")
+            .attr("class", "chartTitleBack")
+            .attr("width", 580)
+            .attr("height", 40)
+            .attr("x", chartInnerWidth - 580 + leftPadding)
+            .attr("y", topBottomPadding)
 
         //create a text element for the chart title
         var chartTitle = chart.append("text")
-            .attr("x", chartWidth - 25)
-            .attr("y", 40)
+            .attr("text-anchor", "middle")
+            .attr("x", chartInnerWidth - 290 + leftPadding)
+            .attr("y", 37)
             .attr("class", "chartTitle")
-            .attr("text-anchor", "end")
             .text(expressed + " in Each ARTCC");
 
         //create frame for chart border
@@ -374,6 +375,7 @@
         //set bar positions, heights, and colors
         updateChart(bars, csvData.length, colorScale);
 
+        //remove highlight
         var desc = bars.append("desc")
             .text('{"stroke": "none", "stroke-width": "0px"}');
 
@@ -391,18 +393,18 @@
         for (var m = 0; m < csvData.length; m++) {
             minMaxArray.push(parseFloat(csvData[m][attribute]));
             minMaxArray.sort(function (a, b) {
-                return b - a
+                return b - a;
             })
         };
 
         //name the first item in the sorted array as the maximum and the last item as the minimum, then store those two values as an array
         var attrMax = minMaxArray[0];
         var attrMin = minMaxArray[csvData.length - 1];
-        domainArray = [attrMax, attrMin]
+        domainArray = [attrMax, attrMin];
 
+        //return the array containing the attribute minimum and maximum to set the domain
         return domainArray;
-
-    }
+    };
 
     //=====================================================================
 
@@ -427,6 +429,7 @@
                 }
             });
 
+        //recolor bars
         var bars = d3.selectAll(".bar")
             //Sort bars
             .sort(function (a, b) {
@@ -438,8 +441,10 @@
             })
             .duration(650);
 
+        //calculate the minimum and maximum of the attribute data set
         domainMinMax(attribute, csvData);
 
+        //update the chart with the new data
         updateChart(bars, csvData.length, colorScale);
     };
 
@@ -536,6 +541,7 @@
             return styleObject[styleName];
         };
 
+        //remove the infolabel
         d3.select(".infolabel")
             .remove();
     };
@@ -548,17 +554,19 @@
         var labelAttribute = "<h1>" + props[expressed] +
             "</h1><b>" + expressed + "</b>";
 
-        //create info label div
+        //create info label popup
         var infolabel = d3.select("body")
             .append("div")
             .attr("class", "infolabel")
             .attr("id", props.IDENT + "_label")
             .html(labelAttribute);
 
+        //add additional text to the popup
         var centerName = infolabel.append("div")
             .attr("class", "labelname")
             .html(props.NAME + " ---   in the " + props.IDENT + " ARTCC");
 
+        //add text to inform user to click for more info
         var moreInfo = centerName.append("div")
             .attr("class", "moreInfo")
             .html('Click the ARTCC, Airport, or Bar for more Airport Info!');
@@ -572,31 +580,33 @@
         var x = event.clientX + 10,
             y = event.clientY - 75;
 
+        //position the info label
         d3.select(".infolabel")
             .style("left", x + "px")
             .style("top", y + "px");
     };
 
     //=====================================================================
-    //=====================================================================
 
-    //function to create label Legend
+    //function to create label legend that explains elements of the popup
     function labelLegend() {
 
-        //create info label div
+        //create info label legend
         var labLeg = d3.select("body")
             .append("div")
             .attr("class", "labLegend")
             .attr("id", "labelLegend")
             .html("<h1>###</h1><b> Selected Attribute</b>");
 
+        //add additional text to the legend
         var legInfo = labLeg.append("div")
             .attr("class", "labelname")
-            .html("<i><b>Airport City</b></i> ---   in the <i><b>'ZZZZ'</b></i> ARTCC");
+            .html("<i><b>Airport City</b></i> ---   in the <i><b>'ZZZ'</b></i> ARTCC");
     };
 
     //=====================================================================
 
+    //remove the label legend
     function labLegRemove() {
         d3.select("#labelLegend").remove();
     }
@@ -607,22 +617,25 @@
     function infoBox(props) {
         var infoContent = '<img src = "img/' + props + '.jpg"></img>';
 
-        //create info label div
+        //create info label
         var infoBox = d3.select("body")
             .append("div")
             .attr("class", "infoBox")
             .attr("id", "infoBoxId")
+            .style("top", (chartHeight) + "px")
             .html(infoContent);
     };
 
     //=====================================================================
 
+    //remove the info box when complete
     function infoBoxRemove() {
         d3.select("#infoBoxId").remove();
     }
 
     //=====================================================================
 
+    //open new window at airnav.com for each airport when clicked
     function addedInfo(props) {
         var url = 'https://www.airnav.com/airport/';
         url = url + props.ICAO_ID;
@@ -631,22 +644,60 @@
 
     //=====================================================================
 
+    //function to create various static elements on the page
     function pageTitle() {
+
+        //create overall page title
         var titleText = d3.select("body")
             .append("div")
             .attr("class", "pageTitle")
-            .html('<img src="img/webTitle.jpg"></img> &nbsp &nbsp &nbsp <span class="titleSub">Attributes of the Top Airports in each U.S. Air Route Traffic Control Center </span>');
-            //.html('Busiest Airports in the United States - <span class="titleSub">Top Airport in each Air Route Traffic Control Center (ARTCC)</span>');
+            .html('<img src="img/webTitle.jpg"></img>  &nbsp &nbsp <span class="titleSub">Attributes of the Top Airports in each U.S. Air Route Traffic Control Center (ARTCC) in 2015</span>');
 
+        //add background to title
         var titleBkgnd = d3.select("body")
             .append("svg")
             .attr("class", "titleBack")
+            .attr("height", 70)
             .attr("width", window.innerWidth)
 
-        var chartFrame = titleBkgnd.append("rect")
+        //add frame to title
+        var titleFrame = titleBkgnd.append("rect")
             .attr("class", "titleFrame")
             .attr("width", window.innerWidth)
 
+        //add background to metadata
+        var metaBkgnd = d3.select("body")
+            .append("svg")
+            .attr("class", "metaBack")
+            .attr("height", 110)
+            .attr("width", window.innerWidth)
+
+        //create metadata text
+        var metadata = d3.select("body")
+            .append("div")
+            .attr("class", "metadata")
+            .attr("text-anchor", "right")
+            .html('<p align=right>Created by Michael Imhoff for U.W. - Madison - Geography 575 - Spring 2023</p><p align=right>Mapped Data & Attributes from the FAA & Bureau of Transportation Statistics</p><p align=right>Basemap shapefiles from Natural Earth; ARTCC Boundaries & Airport Locations from the FAA</p><p align=right>Airport Images & Information from https://www.airnav.com/airports/</p><p>Map Projection: Albers Equal Area Conic - Central Meridian: 98.5°W - Standard Parallels: 20°N & 45°N</p>');
+
+        //add background to metadata
+        var addInfoBkgnd = d3.select("body")
+            .append("svg")
+            .attr("class", "addInfoBack")
+            .attr("height", 110)
+            .attr("width", window.innerWidth)
+
+        //create metadata text
+        var addInfo = d3.select("body")
+            .append("div")
+            .attr("class", "addInfo")
+            .attr("text-anchor", "left")
+            .html('<p align=left>Air Route Traffic Control Centers (ARTCCs) are facilities in the United States responsible for controlling all types of aircraft flying between the surface and 60,000 feet while outside of controlled airspace around airports. ARTCCs typically cover a geographic area that is topographically, climatologically, and culturally distinct from those around it. This means that each area has unique attributes that impact commercial aviation in different ways. Examples of these distinctions are highlighted in the attributes shown in the above map and bar chart.  The total number of passengers departing often correlates to the size of major cities in the ARTCC. Cargo transport is spread relatively evenly between each coast. Miles flown per passenger, or how far on average each departing passenger flies before their next landing, are highest on the coasts, where many flights cross oceans, with Pacific crossing flights being longer than those crossing the Atlantic. Flight delays are more common in the midwest, where strong spring and summer thunderstorms cause brief delays without cancellations, while strong, long-lasting storms in the Northeast cause widespread flight cancellations.</p>');
+
+        //place map legend image
+        var mapLegend = d3.select("body")
+            .append("div")
+            .attr("class", "mapLegend")
+            .html('<img src="img/mapLegend.jpg"></img>')
     }
 
 })(); //last line of main.js
