@@ -1,16 +1,13 @@
 //First line of main.js...wrap everything in a self-executing anonymous function to move to local scope
 (function () {
     //pseudo-global variables
-    var attrArray = ["Millions of Passengers Departed", "Millions of Pounds of Cargo", "Miles (avg) to Landing per Passenger", "% of Flights Delayed", "% of Flights Cancelled"]; //list of attributes
+    var attrArray = ["Million Passengers Departed", "Million Pounds of Cargo", "Miles (avg) to Landing per Passenger", "% of Flights Delayed", "% of Flights Cancelled"]; //list of attributes
     var expressed = attrArray[0]; //initial attribute
     var domainArray = [49.35, 2.72] //min and max domain array for initial attribute
 
-console.log(window.innerHeight)
-console.log(window.innerWidth)
-
     //chart frame dimensions
-    var chartWidth = window.innerWidth * 0.45,
-        chartHeight = chartWidth * 0.6 * (1 + 1 / 9),
+    var chartWidth = window.innerWidth * 0.45, //set chart width based on window dimensions
+        chartHeight = chartWidth * 0.6 * (1 + 1 / 9), //set chart height based on window dimensions
         leftPadding = 45,
         rightPadding = 10,
         topBottomPadding = 10,
@@ -212,10 +209,9 @@ console.log(window.innerWidth)
             })
             .on("mousemove", moveLabel)
 
-        //remove highlight
+        //add original style descriptor
         var desc = center.append("desc")
             .text('{"stroke": "#000", "stroke-width": "0.5px"}');
-
     };
 
     //=====================================================================
@@ -301,7 +297,7 @@ console.log(window.innerWidth)
     //function to create coordinated bar chart
     function setChart(csvData, colorScale) {
 
-        //set the initial scale
+        //set the initial range and domain
         var yScale = d3.scaleLinear()
             .range([0, chartHeightLess - topBottomPadding])
             .domain([50, 0]);
@@ -375,10 +371,9 @@ console.log(window.innerWidth)
         //set bar positions, heights, and colors
         updateChart(bars, csvData.length, colorScale);
 
-        //remove highlight
+        //add original style descriptor
         var desc = bars.append("desc")
             .text('{"stroke": "none", "stroke-width": "0px"}');
-
     };
 
     //=====================================================================
@@ -397,12 +392,12 @@ console.log(window.innerWidth)
             })
         };
 
-        //name the first item in the sorted array as the maximum and the last item as the minimum, then store those two values as an array
+        //name the first item in the sorted array as the maximum and the last item as the minimum, then store those two values as another array
         var attrMax = minMaxArray[0];
         var attrMin = minMaxArray[csvData.length - 1];
         domainArray = [attrMax, attrMin];
 
-        //return the array containing the attribute minimum and maximum to set the domain
+        //return the array containing the attribute minimum and maximum to set the domain in other functions
         return domainArray;
     };
 
@@ -569,7 +564,7 @@ console.log(window.innerWidth)
         //add text to inform user to click for more info
         var moreInfo = centerName.append("div")
             .attr("class", "moreInfo")
-            .html('Click the ARTCC, Airport, or Bar for more Airport Info!');
+            .html('Click the ARTCC, Airport, or Bar for detailed airport info!');
     };
 
     //=====================================================================
@@ -613,11 +608,11 @@ console.log(window.innerWidth)
 
     //=====================================================================
 
-    //function to create dynamic info box
+    //function to create dynamic info/picture box
     function infoBox(props) {
-        var infoContent = '<img src = "img/' + props + '.jpg"></img>';
+        var infoContent = '<img src = "img/' + props + '.jpg"></img>'; //specify location of image for popup
 
-        //create info label
+        //create info/picture box
         var infoBox = d3.select("body")
             .append("div")
             .attr("class", "infoBox")
@@ -644,7 +639,7 @@ console.log(window.innerWidth)
 
     //=====================================================================
 
-    //function to create various static elements on the page
+    //function to create various text and background elements on the page
     function pageTitle() {
 
         //create overall page title
@@ -657,7 +652,7 @@ console.log(window.innerWidth)
         var titleBkgnd = d3.select("body")
             .append("svg")
             .attr("class", "titleBack")
-            .attr("height", 70)
+            .attr("height", 70 + "px")
             .attr("width", window.innerWidth)
 
         //add frame to title
@@ -669,7 +664,7 @@ console.log(window.innerWidth)
         var metaBkgnd = d3.select("body")
             .append("svg")
             .attr("class", "metaBack")
-            .attr("height", 110)
+            .attr("height", 98 + "px")
             .attr("width", window.innerWidth)
 
         //create metadata text
@@ -683,14 +678,16 @@ console.log(window.innerWidth)
         var addInfoBkgnd = d3.select("body")
             .append("svg")
             .attr("class", "addInfoBack")
-            .attr("height", 110)
-            .attr("width", window.innerWidth)
+            .style("top", (chartHeight + 125) + "px")
+            .style("left", (window.innerWidth*0.2) + "px")
 
         //create metadata text
         var addInfo = d3.select("body")
             .append("div")
             .attr("class", "addInfo")
             .attr("text-anchor", "left")
+            .style("top", (chartHeight + 125) + "px")
+            .style("left", (window.innerWidth*0.2 + 15) + "px")
             .html('<p align=left>Air Route Traffic Control Centers (ARTCCs) are facilities in the United States responsible for controlling all types of aircraft flying between the surface and 60,000 feet while outside of controlled airspace around airports. ARTCCs typically cover a geographic area that is topographically, climatologically, and culturally distinct from those around it. This means that each area has unique attributes that impact commercial aviation in different ways. Examples of these distinctions are highlighted in the attributes shown in the above map and bar chart.  The total number of passengers departing often correlates to the size of major cities in the ARTCC. Cargo transport is spread relatively evenly between each coast. Miles flown per passenger, or how far on average each departing passenger flies before their next landing, are highest on the coasts, where many flights cross oceans, with Pacific crossing flights being longer than those crossing the Atlantic. Flight delays are more common in the midwest, where strong spring and summer thunderstorms cause brief delays without cancellations, while strong, long-lasting storms in the Northeast cause widespread flight cancellations.</p>');
 
         //place map legend image

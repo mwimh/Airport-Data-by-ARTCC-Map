@@ -1,14 +1,60 @@
-.map {
-    border: thick solid #525252;
-    margin: 100px 0 0 20px;
+body {
+    background-color: #e7e7e7;
+    background-image: url("/img/background.jpg");
+    background-size: cover;
 
 }
 
-.chart {
-    background-color: rgb(240, 240, 240);
+.pageTitle {
+    font-size: 30px;
+    font-family: Georgia, serif;
+    z-index: 11;
+    position: fixed;
+    top: 15px;
+    left: 65px;
+    text-align: center;
+}
+
+.titleBack {
+    background-color: #ffffff;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+}
+
+.titleFrame {
+    stroke: #535353;
+    stroke-width: 5px;
+    z-index: 10;
+    height: 70px;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    fill: none;
+}
+
+.titleSub {
+    font-size: 18pt;
+    font-style: italic;
+    text-decoration: underline;
+    vertical-align: text-top;
+}
+
+.map {
     border: thick solid #525252;
-    float: right;
-    margin: 100px 20px 0 0;
+    margin: 100px 0 0 20px;
+}
+
+.mapTitle {
+    display: table;
+    font-family: Georgia, serif;
+    font-size: 1.6em;
+    text-decoration: underline;
+    z-index: 11;
+}
+
+.mapTitleBack {
+    fill: rgba(255, 255, 255, 0.8);
 }
 
 .backgnd {
@@ -54,6 +100,13 @@
     z-index: -1;
 }
 
+.chart {
+    background-color: rgb(240, 240, 240);
+    border: thick solid #525252;
+    float: right;
+    margin: 100px 20px 0 0;
+}
+
 .chartBackground {
     fill: rgba(75, 75, 75, 0.3);
 }
@@ -67,14 +120,6 @@
 
 .chartTitleBack {
     fill: rgb(240, 240, 240);
-}
-
-.mapTitle {
-    display: table;
-    font-family: Georgia, serif;
-    font-size: 1.6em;
-    text-decoration: underline;
-    z-index: 11;
 }
 
 .chartFrame {
@@ -123,10 +168,11 @@ option {
     position: absolute;
     height: fit-content;
     min-width: 150px;
-    color: #fff;
-    background-color: #005092;
-    border: solid #fff;
+    color: #001a38;
+    background-color: #ffffff;
+    border: solid #636363;
     padding: 5px 10px;
+    border-radius: 10px;
 }
 
 .infolabel h1 {
@@ -134,8 +180,8 @@ option {
     padding: 0;
     display: inline-block;
     line-height: 1em;
+    color:rgb(0, 61, 194);
 }
-
 
 .infoBox {
     line-height: 0px;
@@ -149,16 +195,6 @@ option {
     padding: 10px;
 }
 
-.cntrName {
-    font-weight: bold;
-    color: #1b2286;
-}
-
-.callsign {
-    font-style: italic;
-    font-size: smaller;
-}
-
 .labLegend {
     position: absolute;
     top: 200px;
@@ -166,10 +202,11 @@ option {
     z-index: 10;
     height: fit-content;
     min-width: 150px;
-    color: #fff;
-    background-color: #005092;
-    border: solid #fff;
+    color: #001a38;
+    background-color: #ffffff;
+    border: solid #636363;
     padding: 5px 10px;
+    border-radius: 10px;
 }
 
 .labLegend h1 {
@@ -177,65 +214,13 @@ option {
     padding: 0;
     display: inline-block;
     line-height: 1em;
+    color:rgb(0, 61, 194);
 }
 
 .moreInfo {
     font-size: small;
-    color: rgb(195, 158, 255)
-}
-
-.backgroundImg {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    opacity: 0.2;
-    size: 100%;
-}
-
-.pageTitle {
-    font-size: 30px;
-    font-family: Georgia, serif;
-    z-index: 11;
-    position: fixed;
-    top: 15px;
-    left: 65px;
-    text-align: center;
-}
-
-.titleBack {
-    background-color: #ffffff;
-    position: fixed;
-    top: 0px;
-    left: 0px;
-}
-
-.titleFrame {
-    stroke: #535353;
-    stroke-width: 5px;
-    z-index: 10;
-    height: 70px;
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    fill: none;
-}
-
-body {
-    background-color: #e7e7e7;
-    background-image: url("/img/background.jpg");
-    background-size: cover;
-
-}
-
-.titleSub {
-    font-size: 18pt;
-    font-style: italic;
-    text-decoration: underline;
-    vertical-align: text-top;
-}
-
-.mapTitleBack {
-    fill: rgba(255, 255, 255, 0.8);
+    color: rgb(171, 22, 201);
+    line-height: 25px;
 }
 
 .metadata {
@@ -244,8 +229,8 @@ body {
     color:rgb(221, 221, 221);
     line-height: 0.35;
     position: fixed;
-    bottom: 10px;
-    right: 30px;
+    bottom: 0px;
+    right: 50px;
 }
 
 .metaBack {
@@ -269,8 +254,6 @@ body {
     color:rgb(0, 0, 0);
     line-height: 1.35;
     position: absolute;
-    top: 71.5%;
-    left: 450px;
     max-width: 1320px;
     word-wrap: break-word;
 }
@@ -279,8 +262,6 @@ body {
     background-color: #ffffff;
     opacity: 0.7;
     position: absolute;
-    top: 72%;
-    left: 435px;
     width: 1350px;
-    height: 120px;
+    height: 125px;
 }

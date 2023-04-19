@@ -1,4 +1,4 @@
-﻿id,Millions of Passengers Departed,Millions of Pounds of Cargo,Miles (avg) to Landing per Passenger,% of Flights Delayed,% of Flights Cancelled,NAME,IDENT,TYPE_CODE,,ICAO_ID,zIDENT
+﻿id,Million Passengers Departed,Million Pounds of Cargo,Miles (avg) to Landing per Passenger,% of Flights Delayed,% of Flights Cancelled,NAME,IDENT,TYPE_CODE,,ICAO_ID,zIDENT
 9,22.02,67.01,1068,18.45,0.69,"Phoenix, AZ",ZAB,Albuquerque Center,,KABQ,zZAB
 1,49.35,254.42,971,15.98,0.89,"Atlanta, GA",ZTL,Atlanta Center,,KATL,zZTL
 16,5.71,8.45,680,17.41,2.32,"Nashville, TN",ZME,Memphis Center,,KBNA,zZME
