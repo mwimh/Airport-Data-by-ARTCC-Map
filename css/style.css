@@ -172,6 +172,7 @@ option {
     background-color: #ffffff;
     border: solid #636363;
     padding: 5px 10px;
+    top: -75px;
     border-radius: 10px;
 }
 
@@ -180,7 +181,7 @@ option {
     padding: 0;
     display: inline-block;
     line-height: 1em;
-    color:rgb(0, 61, 194);
+    color: rgb(0, 61, 194);
 }
 
 .infoBox {
@@ -214,7 +215,7 @@ option {
     padding: 0;
     display: inline-block;
     line-height: 1em;
-    color:rgb(0, 61, 194);
+    color: rgb(0, 61, 194);
 }
 
 .moreInfo {
@@ -226,7 +227,7 @@ option {
 .metadata {
     font-family: Trebuchet MS, sans-serif;
     font-size: 0.8em;
-    color:rgb(221, 221, 221);
+    color: rgb(221, 221, 221);
     line-height: 0.35;
     position: fixed;
     bottom: 0px;
@@ -251,7 +252,7 @@ option {
 .addInfo {
     font-family: Trebuchet MS, sans-serif;
     font-size: 0.8em;
-    color:rgb(0, 0, 0);
+    color: rgb(0, 0, 0);
     line-height: 1.35;
     position: absolute;
     max-width: 1320px;

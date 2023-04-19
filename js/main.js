@@ -571,11 +571,23 @@
 
     //function to move info label with mouse
     function moveLabel() {
-        //use coordinates of mousemove event to set label coordinates
-        var x = event.clientX + 10,
-            y = event.clientY - 75;
+        //get width of label
+        var labelWidth = d3.select(".infolabel")
+            .node()
+            .getBoundingClientRect()
+            .width;
 
-        //position the info label
+        //use coordinates of mousemove event to set label coordinates
+        var x1 = event.clientX + 10,
+            y1 = event.clientY - 75,
+            x2 = event.clientX - labelWidth - 10,
+            y2 = event.clientY + 25;
+
+        //horizontal label coordinate, testing for overflow
+        var x = event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1;
+        //vertical label coordinate, testing for overflow
+        var y = event.clientY < 75 ? y2 : y1;
+
         d3.select(".infolabel")
             .style("left", x + "px")
             .style("top", y + "px");
@@ -679,7 +691,7 @@
             .append("svg")
             .attr("class", "addInfoBack")
             .style("top", (chartHeight + 125) + "px")
-            .style("left", (window.innerWidth*0.2) + "px")
+            .style("left", (window.innerWidth * 0.2) + "px")
 
         //create metadata text
         var addInfo = d3.select("body")
@@ -687,7 +699,7 @@
             .attr("class", "addInfo")
             .attr("text-anchor", "left")
             .style("top", (chartHeight + 125) + "px")
-            .style("left", (window.innerWidth*0.2 + 15) + "px")
+            .style("left", (window.innerWidth * 0.2 + 15) + "px")
             .html('<p align=left>Air Route Traffic Control Centers (ARTCCs) are facilities in the United States responsible for controlling all types of aircraft flying between the surface and 60,000 feet while outside of controlled airspace around airports. ARTCCs typically cover a geographic area that is topographically, climatologically, and culturally distinct from those around it. This means that each area has unique attributes that impact commercial aviation in different ways. Examples of these distinctions are highlighted in the attributes shown in the above map and bar chart.  The total number of passengers departing often correlates to the size of major cities in the ARTCC. Cargo transport is spread relatively evenly between each coast. Miles flown per passenger, or how far on average each departing passenger flies before their next landing, are highest on the coasts, where many flights cross oceans, with Pacific crossing flights being longer than those crossing the Atlantic. Flight delays are more common in the midwest, where strong spring and summer thunderstorms cause brief delays without cancellations, while strong, long-lasting storms in the Northeast cause widespread flight cancellations.</p>');
 
         //place map legend image
